@@ -1,0 +1,42 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer: 
+  exclude: 
+    - "**.g.dart"
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at
+  # https://dart-lang.github.io/linter/lints/index.html.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    avoid_web_libraries_in_flutter: false #desabilita alertas de bíbliotecas que só funcionam no flutter web
+    prefer_relative_imports: true #Habilita somente os imports relativos.
+    prefer_single_quotes: true  #Alerta para o uso somente de aspas simples.
+    unnecessary_await_in_return: true  #Alerta para o usuo de await desnecesário
+    prefer_final_locals: true  #Alerta para o uso de variaveis do tipo final para trazer imutabilidade ao projeto.
+    prefer_final_fields: true #
+    avoid_unused_constructor_parameters: true #Alerta para os atributos que não estão sendo usados.
+    always_declare_return_types: true #Alerta para as funções que estão sem um tipo de retorno.
+    require_trailing_commas: true #Alerta para inserir a virgula no final do código para manter organizado a formação. 
+    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
