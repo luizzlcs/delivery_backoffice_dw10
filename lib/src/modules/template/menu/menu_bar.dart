@@ -18,7 +18,7 @@ class _MenuBarState extends State<MenuBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: context.percentWidth(.18),
       height: double.infinity,
       child: Column(

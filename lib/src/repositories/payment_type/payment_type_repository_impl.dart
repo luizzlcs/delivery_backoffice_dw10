@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
-
 import '../../core/exceptions/repository_exception.dart';
 import '../../core/rest_client/custom_dio.dart';
 import '../../model/payment_type_model.dart';
@@ -13,10 +11,10 @@ class PaymentTypeRepositoryImpl extends PaymentTypeRepository {
   PaymentTypeRepositoryImpl(this._dio);
 
   @override
-  Future<List<PaymentTypeModel>> findAll(bool enabled) async {
+  Future<List<PaymentTypeModel>> findAll(bool? enabled) async {
     try {
       final paymentResult = await _dio.auth().get(
-        '/payment-type',
+        '/payment-types',
         queryParameters: {
           if (enabled != null) 'enabled': enabled,
         },
@@ -34,13 +32,14 @@ class PaymentTypeRepositoryImpl extends PaymentTypeRepository {
   Future<PaymentTypeModel> getById(int id) async {
     try {
       final paymentResult = await _dio.auth().get(
-            '/payment-type$id',
-          );
+            '/payment-types$id',
+          );  
       return PaymentTypeModel.fromMap(paymentResult.data);
     } on DioException catch (e, s) {
       log('Erro ao buscar forma de pagamentos $id', error: e, stackTrace: s);
       throw RepositoryException(
-          message: 'Erro ao buscar forma de pagamentos $id');
+        message: 'Erro ao buscar forma de pagamentos $id',
+      );
     }
   }
 
@@ -51,12 +50,12 @@ class PaymentTypeRepositoryImpl extends PaymentTypeRepository {
 
       if (model.id != null) {
         await client.auth().put(
-              '/payment-type/${model.id}',
+              '/payment-types/${model.id}',
               data: model.toMap(),
             );
       } else {
         await client.auth().post(
-              '/payment-type',
+              '/payment-types',
               data: model.toMap(),
             );
       }

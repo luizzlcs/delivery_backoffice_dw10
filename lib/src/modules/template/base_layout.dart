@@ -46,11 +46,12 @@ class BaseLayout extends StatelessWidget {
                   children: [
                     const menu.MenuBar(),
                     Expanded(
-                        child: Container(
-                      padding: EdgeInsets.only(left: 20),
-                      color: Colors.grey[50],
-                      child: body,
-                    )),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 20),
+                        color: Colors.grey[50],
+                        child: body,
+                      ),
+                    ),
                   ],
                 ),
               ),
