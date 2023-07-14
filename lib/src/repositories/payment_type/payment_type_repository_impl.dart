@@ -20,7 +20,7 @@ class PaymentTypeRepositoryImpl extends PaymentTypeRepository {
         },
       );
       return paymentResult.data
-          .map<PaymentTypeModel>((p) => PaymentTypeModel.fromJson(p))
+          .map<PaymentTypeModel>((p) => PaymentTypeModel.fromMap(p))
           .toList();
     } on DioException catch (e, s) {
       log('Erro ao buscar formas de pagamentos', error: e, stackTrace: s);

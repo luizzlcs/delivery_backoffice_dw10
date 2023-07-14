@@ -4,6 +4,7 @@ import 'package:mobx/mobx.dart';
 
 import '../../core/ui/helpers/loader.dart';
 import '../../core/ui/helpers/messagens.dart';
+import 'payment_type_form/payment_type_form_modal.dart';
 import 'widgets/payment_type_header.dart';
 import 'package:flutter/material.dart';
 
@@ -21,12 +22,15 @@ class _PaymentTypePageState extends State<PaymentTypePage>
     with Loader, Messagens {
   final controller = Modular.get<PaymentTypeController>();
 
-  final disposers = <ReactionDisposer>[ ];
+  final disposers = <ReactionDisposer>[];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final filterDisposer = reaction((_) => controller.filterEnabled, (_) {
+        controller.loadPayment();
+      });
       final statusDisposer = reaction((_) => controller.status, (status) {
         switch (status) {
           case PaymentStateStatus.initial:
@@ -43,21 +47,52 @@ class _PaymentTypePageState extends State<PaymentTypePage>
               controller.errorMessage ?? 'Erro ao buscar formas de pagamentos',
             );
             break;
+          case PaymentStateStatus.addOrUpdatePayment:
+            hideLoader();
+            showAddOrUpdatePayment();
+            break;
         }
       });
-      disposers.addAll([statusDisposer]);
+      disposers.addAll([statusDisposer, filterDisposer]);
       controller.loadPayment();
     });
   }
 
-  @override 
+  @override
+  void dispose() {
+    for(final dispose in disposers){
+      dispose();
+    }
+    super.dispose();
+  }
+
+  void showAddOrUpdatePayment() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Material(
+          color: Colors.black26,
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            backgroundColor: Colors.white,
+            elevation: 10,
+            child: PaymentTypeFormModal(model: controller.paymentTypeSelected),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[50],
       padding: const EdgeInsets.only(left: 40, top: 40, right: 40),
       child: Column(
         children: [
-          const PaymentTypeHeader(),
+          PaymentTypeHeader(controller: controller),
           const SizedBox(
             height: 50,
           ),
@@ -73,8 +108,11 @@ class _PaymentTypePageState extends State<PaymentTypePage>
                     maxCrossAxisExtent: 680,
                   ),
                   itemBuilder: (context, index) {
-                    final PaymentTypeModel = controller.paymentType[index];
-                    return const PaymentTypeItem();
+                    final paymentTypeModel = controller.paymentType[index];
+                    return PaymentTypeItem(
+                      payment: paymentTypeModel,
+                      controller: controller,
+                    );
                   },
                 );
               },
