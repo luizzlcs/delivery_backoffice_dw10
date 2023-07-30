@@ -51,6 +51,11 @@ class _PaymentTypePageState extends State<PaymentTypePage>
             hideLoader();
             showAddOrUpdatePayment();
             break;
+          case PaymentStateStatus.saved:
+            hideLoader();
+            Navigator.of(context, rootNavigator: true).pop();
+            controller.loadPayment();
+            break;
         }
       });
       disposers.addAll([statusDisposer, filterDisposer]);
@@ -60,7 +65,7 @@ class _PaymentTypePageState extends State<PaymentTypePage>
 
   @override
   void dispose() {
-    for(final dispose in disposers){
+    for (final dispose in disposers) {
       dispose();
     }
     super.dispose();
@@ -78,7 +83,10 @@ class _PaymentTypePageState extends State<PaymentTypePage>
             ),
             backgroundColor: Colors.white,
             elevation: 10,
-            child: PaymentTypeFormModal(model: controller.paymentTypeSelected),
+            child: PaymentTypeFormModal(
+              model: controller.paymentTypeSelected,
+              controller: controller,
+            ),
           ),
         );
       },
