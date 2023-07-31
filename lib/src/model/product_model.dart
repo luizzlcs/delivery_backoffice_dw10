@@ -7,7 +7,7 @@ class ProductModel {
    final String name;
    final String description;
    final double price;
-   final double enabled;
+   final bool enabled;
    final String image;
   
   ProductModel({
@@ -36,7 +36,7 @@ class ProductModel {
       name: (map['name'] ?? '') as String,
       description: (map['description'] ?? '') as String,
       price: (map['price'] ?? 0.0) as double,
-      enabled: (map['enabled'] ?? 0.0) as double,
+      enabled: (map['enabled'] ?? 0.0) as bool,
       image: (map['image'] ?? '') as String,
     );
   }
