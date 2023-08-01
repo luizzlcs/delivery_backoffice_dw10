@@ -7,13 +7,11 @@ import '../../../core/ui/helpers/deboucer.dart';
 import '../../../core/ui/helpers/loader.dart';
 import '../../../core/ui/helpers/messagens.dart';
 import '../../../core/ui/widgets/base_header.dart';
-import '../../../model/product_model.dart';
 import 'widgets/product_item.dart';
 import 'widgets/products_controller.dart';
 
 class ProductsPage extends StatefulWidget {
-  
-   const ProductsPage({Key? key}) : super(key: key);
+  const ProductsPage({Key? key}) : super(key: key);
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -42,7 +40,6 @@ class _ProductsPageState extends State<ProductsPage> with Loader, Messagens {
             showError('Erro ao buscar produtos!');
             break;
         }
-        
       });
       controller.loadProducts();
     });
@@ -65,11 +62,13 @@ class _ProductsPageState extends State<ProductsPage> with Loader, Messagens {
           BaseHeader(
             title: 'ADMINISTRAR PRODUTOS',
             buttonLabel: 'ADICIONAR PRODUTO',
-            buttonPressed: () {},
-            searchChange: (value){
-             debouncer.call(() {
-              controller.filterByName(value);
-             });
+            buttonPressed: () {
+              Modular.to.pushNamed('/products/detail');
+            },
+            searchChange: (value) {
+              debouncer.call(() {
+                controller.filterByName(value);
+              });
             },
           ),
           const SizedBox(
@@ -77,21 +76,21 @@ class _ProductsPageState extends State<ProductsPage> with Loader, Messagens {
           ),
           Expanded(
             child: Observer(
-                builder: (_) {
-                    return GridView.builder(
-                          itemCount: controller.product.length,
-                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                            mainAxisExtent: 280,
-                            mainAxisSpacing: 20,
-                            maxCrossAxisExtent: 280,
-                            crossAxisSpacing: 10,
-                          ),
-                          itemBuilder: (context, index) {
-                            return  ProductItem(product: controller.product[index]);
-                          },
-                        );
-                },
-            )
+              builder: (_) {
+                return GridView.builder(
+                  itemCount: controller.product.length,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisExtent: 280,
+                    mainAxisSpacing: 20,
+                    maxCrossAxisExtent: 280,
+                    crossAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    return ProductItem(product: controller.product[index]);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
