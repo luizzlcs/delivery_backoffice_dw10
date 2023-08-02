@@ -12,3 +12,5 @@ Future<void> main()async{
 
 //para executar o servidor
 //jrs run
+// Build running: flutter pub run build_runner build
+// Build running: flutter pub run build_runner watch
