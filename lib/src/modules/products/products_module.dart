@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'detail/product_detail_controller.dart';
 import 'detail/products_detail_page.dart';
 import 'home/products_page.dart';
 import 'home/widgets/products_controller.dart';
@@ -12,6 +13,11 @@ class ProductsModule extends Module {
             i(),
           ),
         ),
+        Bind.lazySingleton(
+          (i) => ProductDetailController(
+            i(),
+          ),
+        )
       ];
 
   @override
