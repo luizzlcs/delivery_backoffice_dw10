@@ -1,10 +1,18 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
+import 'package:validatorless/validatorless.dart';
 
 import '../../../core/env/env.dart';
+import '../../../core/ui/helpers/loader.dart';
+import '../../../core/ui/helpers/messagens.dart';
 import '../../../core/ui/helpers/size_extensions.dart';
+import '../../../core/ui/helpers/upload_html_help.dart';
 import '../../../core/ui/styles/text_styles.dart';
+import 'product_detail_controller.dart';
 
 class ProductsDetailPage extends StatefulWidget {
   final int? productId;
@@ -15,7 +23,57 @@ class ProductsDetailPage extends StatefulWidget {
   State<ProductsDetailPage> createState() => _ProductsDetailPageState();
 }
 
-class _ProductsDetailPageState extends State<ProductsDetailPage> {
+class _ProductsDetailPageState extends State<ProductsDetailPage>
+    with Loader, Messagens {
+  final controller = Modular.get<ProductDetailController>();
+
+  final formKey = GlobalKey<FormState>();
+  final nameEc = TextEditingController();
+  final priceEC = TextEditingController();
+  final descriptionEC = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      reaction((_) => controller.status, (status) {
+        switch (status) {
+          case ProductDetailStateStatus.initial:
+            break;
+          case ProductDetailStateStatus.loading:
+            showLoader();
+            break;
+          case ProductDetailStateStatus.loaded:
+            hideLoader();
+            break;
+          case ProductDetailStateStatus.error:
+            hideLoader();
+            showError(controller.erroMessage!);
+            break;
+          case ProductDetailStateStatus.errorLoadProduct:
+            break;
+          case ProductDetailStateStatus.deleted:
+            break;
+          case ProductDetailStateStatus.uploaded:
+            hideLoader();
+            break;
+          case ProductDetailStateStatus.saved:
+            hideLoader();
+            Navigator.pop(context);
+            break;
+        }
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameEc.dispose();
+    priceEC.dispose();
+    descriptionEC.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final widthButtonAction = context.percentWidth(0.4);
@@ -24,6 +82,7 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
       padding: const EdgeInsets.all(40),
       child: SingleChildScrollView(
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               Row(
@@ -54,21 +113,40 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                   Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.network(
-                          '${Env.instance.get('backend_base_url')}/storage/yzwozoux_jrs_1690854909972.png',
-                          width: 200,
-                        ),
+                      Observer(
+                        builder: (_) {
+                          if (controller.imagePath != null) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.network(
+                                '${Env.instance.get('backend_base_url')}${controller.imagePath}',
+                                width: 200,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
                       Container(
                         margin: const EdgeInsets.all(10),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            UploadHtmlHelp().startUpload(
+                              controller.uploadImageProduct,
+                            );
+                          },
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.white.withOpacity(0.9),
                           ),
-                          child: const Text('Adicionar Foto'),
+                          child: Observer(
+                            builder: (_) {
+                              return Text(
+                                controller.imagePath == null
+                                    ? 'Adicionar foto'
+                                    : 'Alterar foto',
+                              );
+                            },
+                          ),
                         ),
                       )
                     ],
@@ -79,6 +157,9 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                       child: Column(
                         children: [
                           TextFormField(
+                            controller: nameEc,
+                            validator:
+                                Validatorless.required('Nome é obrigatório!'),
                             decoration: const InputDecoration(
                               label: Text('Nome'),
                             ),
@@ -87,6 +168,9 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                             height: 20,
                           ),
                           TextFormField(
+                            controller: priceEC,
+                            validator:
+                                Validatorless.required('Preço é obrigatório!'),
                             decoration: const InputDecoration(
                               label: Text('Preço'),
                             ),
@@ -107,6 +191,8 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 15),
                 child: TextFormField(
+                  validator: Validatorless.required('Descrição é obrigatória!'),
+                  controller: descriptionEC,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   minLines: 10,
@@ -123,12 +209,14 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                 alignment: Alignment.centerRight,
                 child: SizedBox(
                   width: widthButtonAction,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right:15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        OutlinedButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        width: widthButtonAction / 2,
+                        height: 40,
+                        child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Colors.red),
                           ),
@@ -138,12 +226,42 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                             style: context.textStyles.textBold
                                 .copyWith(color: Colors.red),
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        width: widthButtonAction / 2,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final valid =
+                                formKey.currentState?.validate() ?? false;
+                            if (valid) {
+                              if (controller.imagePath == null) {
+                                showWarning(
+                                  'Imagem obrigatória, por favor clique em adicionar foto!',
+                                );
+                                return;
+                              }
+                              controller.save(
+                                nameEc.text,
+                                UtilBrasilFields.converterMoedaParaDouble(
+                                  priceEC.text,
+                                ),
+                                descriptionEC.text,
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Salvar',
+                            style: context.textStyles.textBold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
