@@ -68,7 +68,7 @@ class ProductRepositoryImpl extends ProductRepository {
       if (productModel.id != null) {
         await client.put('/products/$productModel.id', data: data);
       } else {
-        await client.put('/products', data: data);
+        await client.post('/products', data: data);
       }
     } on DioException catch (e, s) {
       log('Erro ao salvar produto', stackTrace: s, error: e);
@@ -77,7 +77,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<String> uploadImageProduct(Uint8List file, String fileName) async {
+  Future<String> uploadImageProduct(Uint8List file, fileName) async {
     try {
   final formData = FormData.fromMap(
     {
