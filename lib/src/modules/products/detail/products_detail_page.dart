@@ -7,6 +7,7 @@ import 'package:mobx/mobx.dart';
 import 'package:validatorless/validatorless.dart';
 
 import '../../../core/env/env.dart';
+import '../../../core/extensions/formatter_extensions.dart';
 import '../../../core/ui/helpers/loader.dart';
 import '../../../core/ui/helpers/messagens.dart';
 import '../../../core/ui/helpers/size_extensions.dart';
@@ -43,6 +44,10 @@ class _ProductsDetailPageState extends State<ProductsDetailPage>
             showLoader();
             break;
           case ProductDetailStateStatus.loaded:
+            final model = controller.productModel!;
+            nameEc.text = model.name;
+            priceEC.text = model.price.currencyPTBR;
+            descriptionEC.text = model.description;
             hideLoader();
             break;
           case ProductDetailStateStatus.error:
@@ -50,18 +55,22 @@ class _ProductsDetailPageState extends State<ProductsDetailPage>
             showError(controller.erroMessage!);
             break;
           case ProductDetailStateStatus.errorLoadProduct:
+            hideLoader();
+            showError('Erro ao carregar o produto para alteração');
+            Navigator.of(context).pop();
             break;
-          case ProductDetailStateStatus.deleted:
-            break;
+            
           case ProductDetailStateStatus.uploaded:
             hideLoader();
             break;
+          case ProductDetailStateStatus.deleted:
           case ProductDetailStateStatus.saved:
             hideLoader();
             Navigator.pop(context);
             break;
         }
       });
+      controller.loadProduct(widget.productId);
     });
     super.initState();
   }
@@ -90,7 +99,7 @@ class _ProductsDetailPageState extends State<ProductsDetailPage>
                   Expanded(
                     child: Text(
                       textAlign: TextAlign.center,
-                      '${widget.productId != null ? 'Alterar' : 'Adiciona'}Produto',
+                      '${widget.productId != null ? 'Alterar ' : 'Adiciona '}Produto',
                       style: context.textStyles.textTitle.copyWith(
                         decoration: TextDecoration.underline,
                         decorationThickness: 2,
@@ -216,15 +225,51 @@ class _ProductsDetailPageState extends State<ProductsDetailPage>
                         padding: const EdgeInsets.all(5),
                         width: widthButtonAction / 2,
                         height: 40,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.red),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            'Deletar',
-                            style: context.textStyles.textBold
-                                .copyWith(color: Colors.red),
+                        child: Visibility(
+                          visible: widget.productId != null,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text(
+                                      'Confirma a exclusão do produto ${controller.productModel!.name}',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          'Cancelar',
+                                          style: context.textStyles.textBold
+                                              .copyWith(color: Colors.red),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          controller.delete();
+                                        },
+                                        child: Text(
+                                          'Confirmar',
+                                          style: context.textStyles.textBold,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              'Deletar',
+                              style: context.textStyles.textBold
+                                  .copyWith(color: Colors.red),
+                            ),
                           ),
                         ),
                       ),

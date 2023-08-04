@@ -25,8 +25,8 @@ class ProductsModule extends Module {
         ChildRoute('/', child: (context, args) => const ProductsPage()),
         ChildRoute(
           '/detail',
-          child: (context, args) => const ProductsDetailPage(
-            productId: null,
+          child: (context, args) => ProductsDetailPage(
+            productId: int.tryParse(args.queryParams['id'] ?? 'Não informado'),
           ),
         ),
       ];
