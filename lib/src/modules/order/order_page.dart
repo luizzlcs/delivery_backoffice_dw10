@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'widget/order_header.dart';
+
 class OrderPage extends StatelessWidget {
   const OrderPage({super.key});
 
@@ -10,8 +12,8 @@ class OrderPage extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.only(top: 40),
           child: Column(
-            children: [
-              
+            children: const [
+              OrderHeader(),
             ],
           ),
         );
