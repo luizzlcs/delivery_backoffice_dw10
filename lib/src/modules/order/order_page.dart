@@ -1,10 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
 
+import '../../core/ui/helpers/loader.dart';
+import '../../core/ui/helpers/messagens.dart';
+import 'order_controller.dart';
 import 'widget/order_header.dart';
 import 'widget/order_item.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
+
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> with Loader, Messagens {
+  final controller = Modular.get<OrderController>();
+  late final ReactionDisposer statusDisposer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      statusDisposer = reaction((_) => controller.status, (status) {
+        switch (status) {
+          case OrderStateStatus.initial:
+            break;
+          case OrderStateStatus.loading:
+            showLoader();
+            break;
+          case OrderStateStatus.loaded:
+            hideLoader();
+            break;
+          case OrderStateStatus.error:
+            hideLoader();
+            showError(controller.errorMessage ?? 'Erro interno');
+            break;
+        }
+      });
+      controller.findOrders();
+    });
+  }
+
+  @override
+  void dispose() {
+    statusDisposer();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,22 +59,27 @@ class OrderPage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 40),
           child: Column(
             children: [
-              OrderHeader(),
+              const OrderHeader(),
               const SizedBox(
-                 height: 50,
+                height: 50,
               ),
               Expanded(
-                  child: GridView.builder(
-                    itemCount: 10,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: 91,
-                  maxCrossAxisExtent: 600,
+                child: Observer(
+                  builder: (_) {
+                    return GridView.builder(
+                      itemCount: controller.orders.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        mainAxisExtent: 91,
+                        maxCrossAxisExtent: 600,
+                      ),
+                      itemBuilder: (context, index) {
+                        return OrderItem(order: controller.orders[index]);
+                      },
+                    );
+                  },
                 ),
-                itemBuilder: (context, index) {
-                  return const OrderItem();
-                  
-                },
-              )),
+              ),
             ],
           ),
         );
