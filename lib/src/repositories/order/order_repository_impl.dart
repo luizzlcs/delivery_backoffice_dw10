@@ -47,7 +47,7 @@ class OrderRepositoryImpl extends OrderRepository {
         },
       );
 
-      return orderResponse.data.map((o) => OrderModel.fromMap(o)).toList();
+      return orderResponse.data.map<OrderModel>((o) => OrderModel.fromMap(o)).toList();
     } on DioException catch (e, s) {
       log(
         'Erro ao buscar pedidos',
