@@ -1,28 +1,37 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/ui/widgets/base_header.dart';
-  
-  class OrderHeader extends StatelessWidget {
-  
-    const OrderHeader({ super.key });
-  
-     @override
-     Widget build(BuildContext context) {
-         return BaseHeader(title: 'Administrar Pedidos', addButton: false,
-         filterWindget: DropdownButton<bool?>(
-        value: enabled,
-        items: const [
-          DropdownMenuItem(value: null, child: Text('Todos')),
-          DropdownMenuItem(value: true, child: Text('Ativos')),
-          DropdownMenuItem(value: false, child: Text('Inativos')),
+import '../../../model/orders/order_status.dart';
+
+class OrderHeader extends StatefulWidget {
+  const OrderHeader({super.key});
+
+  @override
+  State<OrderHeader> createState() => _OrderHeaderState();
+}
+
+class _OrderHeaderState extends State<OrderHeader> {
+  OrderStatus? statusSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return BaseHeader(
+      title: 'Administrar Pedidos',
+      addButton: false,
+      filterWindget: DropdownButton<OrderStatus?>(
+        value: statusSelected,
+        items: [
+          const DropdownMenuItem(value: null, child: Text('Todos')),
+          ...OrderStatus.values
+              .map((s) => DropdownMenuItem(value: s, child: Text(s.name)))
+              .toList()
         ],
         onChanged: (value) {
-          widget.controller.changeFilter(value);
           setState(() {
-            enabled = value;
-            widget.controller.changeFilter(value);
+            statusSelected = value;
           });
         },
       ),
-         );
-  }}
+    );
+  }
+}
