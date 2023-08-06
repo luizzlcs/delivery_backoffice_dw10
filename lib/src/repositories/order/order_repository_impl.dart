@@ -42,7 +42,7 @@ class OrderRepositoryImpl extends OrderRepository {
       final orderResponse = await _dio.auth().get(
         '/orders',
         queryParameters: {
-          'data': date.toIso8601String(),
+          'date': date.toIso8601String(),
           if (status != null) 'status': status.acronym,
         },
       );

@@ -33,11 +33,11 @@ class OrderItem extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'Cancelado',
+                      order.status.name,
                       textAlign: TextAlign.end,
                       style: textStyle.textExtraBold.copyWith(
                         fontSize: 20,
-                        color: Colors.red,
+                        color: order.status.color,
                       ),
                     ),
                   ),

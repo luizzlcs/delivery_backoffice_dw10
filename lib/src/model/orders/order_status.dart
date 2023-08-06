@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 enum OrderStatus {
-  pendente(name: 'Pendente', acronym: 'P', color: Colors.blue),
-  confirmado(name: 'Confirmado', acronym: 'C', color: Colors.green),
-  finalizado(name: 'Finalizado', acronym: 'D', color: Colors.black),
-  cancelado(name: 'Cancelado', acronym: 'R', color: Colors.red),
+  pendente('Pendente', 'P', Colors.blue),
+  confirmado('Confirmado', 'C', Colors.green),
+  finalizado('Finalizado', 'D', Colors.black),
+  cancelado('Cancelado', 'R', Colors.red),
   ;
 
   final String name;
   final String acronym;
   final Color color;
 
-  const OrderStatus({
-    required this.name,
-    required this.acronym,
-    required this.color,
-  });
+  const OrderStatus(
+    this.name,
+    this.acronym,
+    this.color,
+  );
 
-  static OrderStatus pasrse(String acronym) {
+  static OrderStatus parse(String acronym) {
     return values.firstWhere((s) => s.acronym == acronym);
   }
 }

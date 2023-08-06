@@ -18,9 +18,11 @@ class OrderController = OrderControllerBase with _$OrderController;
 
 abstract class OrderControllerBase with Store {
   final OrderRepository _orderRepository;
+  
   @readonly
   var _status = OrderStateStatus.initial;
-
+  
+  
   late final DateTime _today;
 
   @readonly
@@ -44,9 +46,9 @@ abstract class OrderControllerBase with Store {
   _orders = await _orderRepository.findAllOrders(_today, _statusFilter);
   _status = OrderStateStatus.loaded;
 } catch (e, s) {
-  log('Erro ao buscar pedidos dos dia', error: e, stackTrace: s);
+  log('Erro ao buscar pedidos do dia', error: e, stackTrace: s);
   _status = OrderStateStatus.error;
-  _errorMessage ='Erro ao buscar pedidos dos dia';
+  _errorMessage ='Erro ao buscar pedido dos dia';
 }
 
   }

@@ -30,19 +30,20 @@ class OrderModel {
       'id': id,
       'date': date.toIso8601String(),
       'status': status.acronym,
-      'orderProductModel': orderProducts.map((x) => x.toMap()).toList(),
-      'userId': userId,
+      'orderProducts': orderProducts.map((x) => x.toMap()).toList(),
+      'user_id': userId,
       'address': address,
       'cpf': cpf,
       'paymentTypeId': paymentTypeId,
     };
   }
 
+
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       id: (map['id'] ?? 0) as int,
       date: DateTime.parse((map['date'])),
-      status: OrderStatus.pasrse(map['status']),
+      status: OrderStatus.parse(map['status']),
       orderProducts: List<OrderProductModel>.from(
         (map['products']).map<OrderProductModel>(
           (x) => OrderProductModel.fromMap(x as Map<String, dynamic>),
@@ -50,12 +51,13 @@ class OrderModel {
       ),
       userId: (map['user_id'] ?? 0) as int,
       address: (map['address'] ?? '') as String,
-      cpf: (map['cpf'] ?? '') as String,
+      cpf: (map['CPF'] ?? '').toString(),
       paymentTypeId: (map['payment_method_id'] ?? 0) as int,
     );
   }
 
   String toJson() => json.encode(toMap());
+ 
 
   factory OrderModel.fromJson(String source) =>
       OrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
