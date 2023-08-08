@@ -14,3 +14,4 @@ Future<void> main()async{
 //jrs run
 // Build running: flutter pub run build_runner build
 // Build running: flutter pub run build_runner watch
+//Ou ainda:  dart run build_runner watch -d
