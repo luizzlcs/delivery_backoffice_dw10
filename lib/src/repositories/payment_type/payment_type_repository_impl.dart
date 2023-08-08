@@ -32,7 +32,7 @@ class PaymentTypeRepositoryImpl extends PaymentTypeRepository {
   Future<PaymentTypeModel> getById(int id) async {
     try {
       final paymentResult = await _dio.auth().get(
-            '/payment-types$id',
+            '/payment-types/$id',
           );  
       return PaymentTypeModel.fromMap(paymentResult.data);
     } on DioException catch (e, s) {

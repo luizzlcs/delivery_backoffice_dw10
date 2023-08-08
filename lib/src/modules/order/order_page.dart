@@ -42,7 +42,7 @@ class _OrderPageState extends State<OrderPage> with Loader, Messagens {
           case OrderStateStatus.showDetailModal:
             hideLoader();
             showDetailModal();
-           
+
             break;
         }
       });
@@ -50,10 +50,13 @@ class _OrderPageState extends State<OrderPage> with Loader, Messagens {
     });
   }
 
-  void showDetailModal(){
-    showDialog(context: context, builder: (context){
-      return const OrderDetailModal();
-    });
+  void showDetailModal() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const OrderDetailModal();
+      },
+    );
   }
 
   @override
