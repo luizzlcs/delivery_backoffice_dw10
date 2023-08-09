@@ -13,23 +13,31 @@ class MenuBar extends StatefulWidget {
 }
 
 class _MenuBarState extends State<MenuBar> {
-  
   Menu? selectedMenu;
+  var colapsed = false;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: context.percentWidth(.18),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      width: colapsed ? 90 : context.percentWidth(.18),
       height: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Align(
-            alignment: Alignment.centerRight,
+            alignment:
+                colapsed ? Alignment.bottomCenter : Alignment.centerRight,
             child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.keyboard_double_arrow_right),
+              onPressed: () {
+                setState(() {
+                  colapsed = !colapsed;
+                });
+              },
+              icon: colapsed
+                  ? const Icon(Icons.keyboard_double_arrow_right)
+                  : const Icon(Icons.keyboard_double_arrow_left),
             ),
           ),
           const SizedBox(

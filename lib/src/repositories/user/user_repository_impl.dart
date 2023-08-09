@@ -15,7 +15,7 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future<UserModel> getById(int id) async {
     try {
-  final userResponse = await _dio.get('/user/$id');
+  final userResponse = await _dio.get('/users/$id');
   
   return UserModel.fromMap(userResponse.data);
 } on DioException catch (e, s) {

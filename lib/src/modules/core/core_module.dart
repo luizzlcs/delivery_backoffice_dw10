@@ -27,6 +27,7 @@ class CoreModule extends Module {
           (i) => UserRepositoryImpl(
             i(),
           ),
+          export: true,
         )
       ];
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'modules/core/core_module.dart';
+import 'modules/home/home_page.dart';
 import 'modules/login/login_module.dart';
 import 'modules/order/order_module.dart';
 import 'modules/order/order_page.dart';
@@ -23,6 +24,10 @@ class AppModule extends Module {
           ),
           transition: TransitionType.noTransition,
           children: [
+            ChildRoute(
+              '/home',
+              child: ((context, args) => const HomePage()),
+            ),
             ModuleRoute(
               '/payment-type',
               module: PaymentTypeModule(),
